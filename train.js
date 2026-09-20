@@ -1,3 +1,18 @@
+// H-Task
+function getPositive(array) {
+    let result = "";
+
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] > 0) {
+            result += array[i];
+        }
+    }
+
+    return result;
+}
+
+console.log(getPositive([1, -4, 2])); // "12"
+
 // I-Task
 function majorityElement(array) {
     let result = array[0];
