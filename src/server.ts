@@ -8,7 +8,7 @@ mongoose
     .then(data => {
         console.log('MongoDB connection succeed');
         app.listen((process.env.PORT ?? 3003), () => {
-            console.log('The server is running successfully on port: ${PORT}');
+            console.log(`The server is running successfully on port: ${process.env.PORT ?? 3003}`);
         });
     })
     .catch(err => console.log("ERROR on connection MongoDB", err));
