@@ -1,26 +1,10 @@
-function getSquareNumbers(array: number[]) {
-    const result = [];
-
-    for (let i = 0; i < array.length; i++) {
-        result.push({
-            number: array[i],
-            square: array[i] * array[i]
-        });
-    }
-
-    return result;
-}
-
-
-// N-Task
-
-console.log(getSquareNumbers([1, 2, 3]));
-
-function palindromCheck(word: string): boolean {
-    let reversed = word.split("").reverse().join("");
-
-    return word === reversed;
-}
-
-console.log(palindromCheck("dad")); // true
-console.log(palindromCheck("son")); // false
+/**
+ * Project Standarts :
+ * -Login standarts
+ * - Naming standarts
+      function, method , variable => CAMEL    goHome
+      class => PASCAL                         MemberService
+      folder => KEBAB
+      css => SNAKE                            button_style
+- Eror handling
+ */
