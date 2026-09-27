@@ -8,3 +8,10 @@
       css => SNAKE                            button_style
 - Eror handling
  */
+
+/**
+ Traditional API
+ Rest API
+ GraphQL API
+ ...
+ */
