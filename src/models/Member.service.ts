@@ -12,23 +12,25 @@ class MemberService {
     }
 
     public async processSignup(input: MemberInput): Promise<Member> {
-        try {
-            const exist = await this.memberModel
-                .findOne({ memberPhone: input.memberPhone })
-                .exec();
+        console.log("========== SIGNUP DEBUG ==========");
+        console.log("INPUT:", input);
+        console.log("PHONE:", input.memberPhone);
 
-            console.log("exist:", exist);
+        const exist = await this.memberModel
+            .findOne({ memberPhone: input.memberPhone })
+            .exec();
 
-            if (exist) {
-                throw new Error("Member already exists");
-            }
+        console.log("EXIST:", exist);
+        console.log("DATABASE:", this.memberModel.db.name);
+        console.log("COLLECTION:", this.memberModel.collection.name);
+        console.log("==================================");
 
-            const result = await this.memberModel.create(input);
-            return result;
-        } catch (err) {
-            console.log("REAL ERROR:", err);
-            throw err;
+        if (exist) {
+            throw new Error("Member already exists");
         }
+
+        const result = await this.memberModel.create(input);
+        return result;
     }
 }
 
