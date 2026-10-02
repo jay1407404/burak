@@ -18,7 +18,11 @@
     },
     "include": [
         "src/**/*.ts",
-        "train.ts"
+        "src/views/train.ts",
+        "src/router.ts",
+        "src/server.ts",
+        "src/router-admin.ts",
+        "src/app.ts"
     ],
     "exclude": [
         "node_modules"

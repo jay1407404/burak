@@ -1,6 +1,6 @@
 import express from "express";
 const routerAdmin = express.Router();
-import restarauntController from "./controller/restaraunt.controller ";
+import restarauntController from "./src/controller/restaraunt.controller ";
 
 /** Restaraunt */
 routerAdmin.get("/", restarauntController.goHome)
