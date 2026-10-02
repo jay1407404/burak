@@ -23,9 +23,9 @@
 
 
 
-function objectToArray(obj: object): any[] {
-      return Object.entries(obj);
+function hasProperty(obj: object, property: string): boolean {
+      return property in obj;
 }
 
-console.log(objectToArray({ a: 10, b: 20 }));
-// [["a", 10], ["b", 20]]
+console.log(hasProperty({ name: "BMW", model: "M3" }, "model")); // true
+console.log(hasProperty({ name: "BMW", model: "M3" }, "year"));  // false
