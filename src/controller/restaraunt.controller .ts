@@ -4,6 +4,10 @@ import MemberService from "../models/Member.service";
 import { LoginInput, MemberInput } from "../libs/types/types/member";
 import { MemberType } from "../libs/types/enums/member.enum";
 
+
+const memberService = new MemberService();
+
+
 const restarauntController: T = {};
 restarauntController.goHome = (req: Request, res: Response) => {
     try {
@@ -17,15 +21,6 @@ restarauntController.goHome = (req: Request, res: Response) => {
     }
 };
 
-restarauntController.getLogin = (req: Request, res: Response) => {
-    try {
-        console.log("getLogin")
-        res.send("Login Page")
-    } catch (err) {
-        console.log("Error, getLogin:", err);
-    }
-};
-
 restarauntController.getSignup = (req: Request, res: Response) => {
     try {
         console.log("getSignup")
@@ -35,19 +30,13 @@ restarauntController.getSignup = (req: Request, res: Response) => {
     }
 };
 
-restarauntController.processLogin = async (req: Request, res: Response) => {
+
+restarauntController.getLogin = (req: Request, res: Response) => {
     try {
-        console.log("processLogin");
-        console.log("body:", req.body);
-        const input: LoginInput = req.body;
-
-        const memberService = new MemberService();
-        const result = await memberService.processLogin({ input });
-
-        res.send(result);
+        console.log("getLogin")
+        res.send("Login Page")
     } catch (err) {
-        console.log("Error, processLogin:", err);
-        res.send(err);
+        console.log("Error, getLogin:", err);
     }
 };
 
@@ -59,10 +48,9 @@ restarauntController.processSignup = async (req: Request, res: Response) => {
 
         const newMember: MemberInput = req.body;
         newMember.memberType = MemberType.RESTARAUNT;
-
-
-        const memberService = new MemberService();
         const result = await memberService.processSignup(newMember);
+        // TODO: SESSIONS AUTHENTICATION
+
 
 
         res.send(result);
@@ -73,6 +61,20 @@ restarauntController.processSignup = async (req: Request, res: Response) => {
 
 };
 
+restarauntController.processLogin = async (req: Request, res: Response) => {
+    try {
+        console.log("processLogin");
 
+        console.log("body:", req.body);
+        const result = await memberService.processLogin({ input: req.body });
+        // TODO: SESSIONS AUTHENTICATION
+
+
+        res.send(result);
+    } catch (err) {
+        console.log("Error, processLogin:", err);
+        res.send(err);
+    }
+};
 
 export default restarauntController; 

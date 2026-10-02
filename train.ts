@@ -16,6 +16,11 @@
  ...
  */
 
+/**
+ Traditional FD  => BSSR    => EJS
+ Modern FD       => SPA   => REACT
+ */
+
 
 
 function objectToArray(obj: object): any[] {
