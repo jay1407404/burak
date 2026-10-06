@@ -12,18 +12,22 @@ class MemberService {
     }
 
     /** SPA */
-
     public async signup(input: MemberInput): Promise<Member> {
-        const salt = await bcrypt.genSalt();
-        input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
-
         try {
+            const exist = await this.memberModel.findOne({
+                $or: [{ memberNick: input.memberNick }, { memberPhone: input.memberPhone }]
+            });
+
+            if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+
+            input.memberPassword = await bcrypt.hash(input.memberPassword, 10);
             const result = await this.memberModel.create(input);
+
             result.memberPassword = "";
             return result.toJSON();
         } catch (err) {
             console.log("Error, model:signup", err);
-            throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+            throw err;
         }
     }
 
