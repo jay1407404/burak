@@ -5,6 +5,15 @@ import routerAdmin from "./router-admin";
 import morgan from "morgan";
 import { MORGAN_FORMAT } from "./src/libs/types/types/config";
 
+import session from "express-session";
+import MongoDBStore from "connect-mongodb-session";
+
+const MongoDBStoreSession = MongoDBStore(session);
+const store = new MongoDBStoreSession({
+    uri: String(process.env.MONGO_URI),
+    collection: "sessions",
+});
+
 //** 1-ENTRANCE */
 const app = express();
 
@@ -16,7 +25,20 @@ app.use(express.json());
 
 app.use(morgan(MORGAN_FORMAT));
 
-/** 2-SESSIONS */
+/** 2-SESSIONS  - Middleware sifatida integrratsiya qilindi*/
+
+app.use(
+    session({
+        secret: String(process.env.SESION_SECRET),
+        cookie: {
+            maxAge: 1000 * 3600 * 3,   // 3 soat
+        },
+        store: store,
+        resave: true, //auth refresh qiladi har safar, 
+        //agar true bo'lsa, har safar sessiya ma'lumotlarini saqlaydi, 
+        // false bo'lsa, faqat o'zgargan bo'lsa saqlaydi
+        saveUninitialized: true
+    }));
 
 
 /** 3-VIEWS */
