@@ -11,20 +11,50 @@ class MemberService {
         this.memberModel = MemberModel;
     }
 
+    /** SSR */
+
+
+    public async processSignup(input: MemberInput): Promise<Member> {
+        // const exist = await this.memberModel
+        //     .findOne({ memberPhone: input.memberPhone })
+        //     .exec();
+        // if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+
+
+        console.log("before:", input.memberPassword);
+        const salt = await bcrypt.genSalt();
+        input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
+        console.log("after:", input.memberPassword);
+
+
+        try {
+            const result = await this.memberModel.create(input) as unknown as Member;
+            result.memberPassword = "";
+            return result;
+        } catch (err) {
+            throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+        }
+    }
+
     /** SPA */
     public async signup(input: MemberInput): Promise<Member> {
         try {
             const exist = await this.memberModel.findOne({
-                $or: [{ memberNick: input.memberNick }, { memberPhone: input.memberPhone }]
+                $or: [
+                    { memberNick: input.memberNick },
+                    { memberPhone: input.memberPhone }
+                ]
             });
 
-            if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+            if (exist)
+                throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
 
             input.memberPassword = await bcrypt.hash(input.memberPassword, 10);
-            const result = await this.memberModel.create(input);
+
+            const result = await this.memberModel.create(input) as unknown as Member;
 
             result.memberPassword = "";
-            return result.toJSON();
+            return result;
         } catch (err) {
             console.log("Error, model:signup", err);
             throw err;
@@ -51,34 +81,15 @@ class MemberService {
             throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSSWORD);
         }
 
-        return await this.memberModel.findById(member.id).lean().exec();
-    }
-
-
-    /** SSR */
-
-
-    public async processSignup(input: MemberInput): Promise<Member> {
-        const exist = await this.memberModel
-            .findOne({ memberPhone: input.memberPhone })
-            .exec();
-        if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-
-
-        console.log("before:", input.memberPassword);
-        const salt = await bcrypt.genSalt();
-        input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
-        console.log("after:", input.memberPassword);
-
-
-        try {
-            const result = await this.memberModel.create(input);
-            result.memberPassword = "";
-            return result;
-        } catch (err) {
-            throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+        const result = await this.memberModel.findById(member.id).lean().exec();
+        if (!result) {
+            throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
         }
+
+        return result as unknown as Member;
     }
+
+
     public async processLogin({ input }: { input: LoginInput; }): Promise<Member> {
         const member = await this.memberModel
             .findOne(
@@ -98,9 +109,14 @@ class MemberService {
             throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSSWORD);
         }
 
-        return await this.memberModel.findById(member.id).exec();
+        const result = await this.memberModel.findById(member.id).lean().exec();
 
+        if (!result) {
+            throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
+        }
+
+        return result as unknown as Member;
     }
 }
 
-export default MemberService;     
+export default MemberService;

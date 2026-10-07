@@ -9,8 +9,9 @@ import session from "express-session";
 import MongoDBStore from "connect-mongodb-session";
 
 const MongoDBStoreSession = MongoDBStore(session);
+
 const store = new MongoDBStoreSession({
-    uri: String(process.env.MONGO_URI),
+    uri: String(process.env.MONGO_URL),
     collection: "sessions",
 });
 
