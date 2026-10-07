@@ -1,19 +1,25 @@
 import express from "express";
 const routerAdmin = express.Router();
-import restarauntController from "./src/controller/restaraunt.controller ";
+import restaurantController from "./src/controller/restaraunt.controller";
+import productController from "./src/controller/product.controller";
 
-/** Restaraunt */
-routerAdmin.get("/", restarauntController.goHome)
+/** Restaurant */
+routerAdmin.get("/", restaurantController.goHome)
 routerAdmin
-    .get("/login", restarauntController.getLogin)
-    .post("/login", restarauntController.processLogin);
+    .get("/login", restaurantController.getLogin)
+    .post("/login", restaurantController.processLogin);
 routerAdmin
-    .get("/signup", restarauntController.getSignup)
-    .post("/signup", restarauntController.processSignup);
-
-routerAdmin.get("/check-me", restarauntController.checkAuthSession);
+    .get("/signup", restaurantController.getSignup)
+    .post("/signup", restaurantController.processSignup);
+routerAdmin.get("/logout", restaurantController.logout);
+routerAdmin.get("/check-me", restaurantController.checkAuthSession);
 
 /** Product */
+routerAdmin.get("/product/all", productController.getAllProducts);
+routerAdmin.post("/product/create", productController.createNewProduct);
+routerAdmin.post("/product/:id", productController.updateChoosenProduct);
+
+
 /** User */
-export default routerAdmin;
+export { routerAdmin };
 
