@@ -16,6 +16,7 @@ restarauntController.goHome = (req: Request, res: Response) => {
         res.render("home")
     } catch (err) {
         console.log("Error, goHome:", err);
+        res.redirect("/admin");
     }
 };
 
@@ -25,6 +26,7 @@ restarauntController.getSignup = (req: Request, res: Response) => {
         res.render("signup")
     } catch (err) {
         console.log("Error, getSignup:", err);
+        res.redirect("/admin"); ``
     }
 };
 
@@ -35,6 +37,7 @@ restarauntController.getLogin = (req: Request, res: Response) => {
         res.render("login")
     } catch (err) {
         console.log("Error, getLogin:", err);
+        res.redirect("/admin");
     }
 };
 
@@ -54,7 +57,10 @@ restarauntController.processSignup = async (req: AdminRequest, res: Response) =>
         });
     } catch (err) {
         console.log("Error, processSignup :", err);
-        res.send(err);
+        const message
+            = err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG;
+        res.send(`<script>alert("${message}");window.location.replace('admin/signup')</script>`
+        );
     }
 
 };
@@ -71,7 +77,25 @@ restarauntController.processLogin = async (req: Request, res: Response) => {
         res.send(result);
     } catch (err) {
         console.log("Error, processLogin:", err);
-        res.send(err);
+        const message
+            = err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG;
+        res.send(`<script>alert("${message}");window.location.replace('admin/login')</script>`
+        );
+    }
+};
+
+restarauntController.logout = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        console.log("logout");
+        req.session.destroy(function () {
+            res.redirect("/admin");
+        });
+    } catch (err) {
+        console.log("Error, logout:", err);
+        res.redirect("/admin");
     }
 };
 
@@ -88,7 +112,10 @@ restarauntController.checkAuthSession = (
             res.send(`<script>alert('${Message.NOT_AUTHENTICATED}')</script>`);
     } catch (err) {
         console.log("Error, checkAuthSession:", err);
-        res.send(err);
+        const message
+            = err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG;
+        res.send(`<script>alert("${message}");window.location.replace('admin/login')</script>`
+        );
     }
 };
 
