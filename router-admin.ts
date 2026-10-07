@@ -11,6 +11,8 @@ routerAdmin
     .get("/signup", restarauntController.getSignup)
     .post("/signup", restarauntController.processSignup);
 
+routerAdmin.get("/check-me", restarauntController.checkAuthSession);
+
 /** Product */
 /** User */
 export default routerAdmin;
