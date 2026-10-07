@@ -23,9 +23,9 @@
 
 
 
-function hasProperty(obj: object, property: string): boolean {
-      return property in obj;
+function calculate(str: string) {
+      return str.split("+").reduce((sum: number, num: string) => sum + Number(num), 0);
 }
 
-console.log(hasProperty({ name: "BMW", model: "M3" }, "model")); // true
-console.log(hasProperty({ name: "BMW", model: "M3" }, "year"));  // false
+console.log(calculate("1+3")); // 4
+console.log(calculate("10+20+5")); // 35
