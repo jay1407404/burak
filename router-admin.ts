@@ -21,9 +21,14 @@ routerAdmin.get(
     productController.getAllProducts
 );
 
-routerAdmin.post("/product/create", productController.createNewProduct);
+routerAdmin.post("/product/create",
+    restarauntController.verifyRestaraunt,
+    productController.createNewProduct
+);
 
-routerAdmin.post("/product/:id", productController.updateChoosenProduct);
+routerAdmin.post("/product/:id",
+    restarauntController.verifyRestaraunt,
+    productController.updateChoosenProduct);
 
 
 /** User */
