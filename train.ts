@@ -23,9 +23,12 @@
 
 
 
-function calculate(str: string) {
-      return str.split("+").reduce((sum: number, num: string) => sum + Number(num), 0);
+function missingNumber(arr) {
+      for (let i = 0; i <= arr.length; i++) {
+            if (!arr.includes(i)) {
+                  return i;
+            }
+      }
 }
 
-console.log(calculate("1+3")); // 4
-console.log(calculate("10+20+5")); // 35
+console.log(missingNumber([3, 0, 1])); // 2
