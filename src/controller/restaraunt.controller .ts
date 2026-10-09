@@ -11,24 +11,6 @@ const memberService = new MemberService();
 
 
 const restarauntController: T = {};
-
-restarauntController.verifyRestaraunt = (
-    req: AdminRequest,
-    res: Response,
-    next: NextFunction
-) => {
-    if (req.session?.member?.memberType === MemberType.RESTARAUNT) {
-        req.member = req.session.member;
-        next();
-    } else {
-        const message = Message.NOT_AUTHENTICATED;
-        res.send(
-            `<script>alert("${message}"); window.location.replace('/admin/login');</script>`
-        );
-    }
-};
-
-
 restarauntController.goHome = (req: Request, res: Response) => {
     try {
         console.log("goHome")
@@ -134,6 +116,22 @@ restarauntController.checkAuthSession = (
         const message
             = err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG;
         res.send(`<script>alert("${message}");window.location.replace('admin/login')</script>`
+        );
+    }
+};
+
+restarauntController.verifyRestaraunt = (
+    req: AdminRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    if (req.session?.member?.memberType === MemberType.RESTARAUNT) {
+        req.member = req.session.member;
+        next();
+    } else {
+        const message = Message.NOT_AUTHENTICATED;
+        res.send(
+            `<script>alert("${message}"); window.location.replace('/admin/login');</script>`
         );
     }
 };
