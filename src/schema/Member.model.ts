@@ -44,12 +44,7 @@ const memberSchema = new Schema({
 
     memberImage: {
         type: String,
-    },
-
-    memberPoints: {
-        type: Number,
-        default: 0,
-    },
+    }
 }, { timestamps: true }      //updatedAt, createAt
 );
 

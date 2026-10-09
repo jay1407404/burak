@@ -3,7 +3,7 @@ import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/types/member";
 import { MemberType } from "../libs/types/enums/member.enum";
-import { Message } from "../libs/types/types/Errors";
+import { HttpCode, Message } from "../libs/types/types/Errors";
 
 
 
@@ -42,28 +42,43 @@ restarauntController.getLogin = (req: Request, res: Response) => {
     }
 };
 
-restarauntController.processSignup = async (req: AdminRequest, res: Response) => {
+restarauntController.processSignup = async (
+    req: AdminRequest,
+    res: Response
+) => {
+    const file = req.file;
+    console.log("Uploaded file:", file);
+
+    const newMember: MemberInput = req.body;
+    console.log("Before image:", newMember.memberImage);
+
+    if (!file) throw new Error("Image file not uploaded");
+
+    newMember.memberImage = file.filename;
+    newMember.memberType = MemberType.RESTARAUNT;
+
+    console.log("After image:", newMember.memberImage);
+
+    const result = await memberService.processSignup(newMember);
     try {
-        console.log("processSignup ");
+        const file = req.file;
+
+        if (!file) throw new Error("Please upload an image");
 
         const newMember: MemberInput = req.body;
+        newMember.memberImage = file.filename;
         newMember.memberType = MemberType.RESTARAUNT;
+
         const result = await memberService.processSignup(newMember);
 
-        // TODO: SESSIONS AUTHENTICATION
-
         req.session.member = result;
-        req.session.save(function () {
-            res.send(result);
-        });
+        req.session.save(() => res.redirect("/admin/product/all"));
     } catch (err) {
-        console.log("Error, processSignup :", err);
-        const message
-            = err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG;
-        res.send(`<script>alert("${message}");window.location.replace('admin/signup')</script>`
+        console.log("Error, processSignup:", err);
+        res.status(400).send(
+            err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG
         );
     }
-
 };
 
 restarauntController.processLogin = async (req: Request, res: Response) => {
@@ -72,10 +87,12 @@ restarauntController.processLogin = async (req: Request, res: Response) => {
 
         console.log("body:", req.body);
         const result = await memberService.processLogin({ input: req.body });
-        // TODO: SESSIONS AUTHENTICATION
 
+        req.session.member = result;
+        req.session.save(function () {
+            res.redirect("/admin/product/all");
+        });
 
-        res.send(result);
     } catch (err) {
         console.log("Error, processLogin:", err);
         const message
