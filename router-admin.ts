@@ -45,6 +45,14 @@ routerAdmin.post(
 routerAdmin.get(
     "/user/all",
     restarauntController.verifyRestaraunt,
-    restarauntController.getUsers)
+    restarauntController.getUsers
+);
+
+routerAdmin.put(
+    "/user/edit",
+    restarauntController.verifyRestaraunt,
+    restarauntController.updateChosenUser
+);
+
 export { routerAdmin };
 

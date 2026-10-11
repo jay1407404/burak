@@ -1,8 +1,9 @@
 import MemberModel from "../schema/Member.model";
-import { LoginInput, Member, MemberInput } from "../libs/types/types/member";
+import { LoginInput, Member, MemberInput, MemberUpdateInput } from "../libs/types/types/member";
 import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
 import { MemberType } from "../libs/types/enums/member.enum";
 import * as bcrypt from "bcryptjs";
+import { shapeIntoMongooseObjectId } from "../libs/types/utils/config";
 
 class MemberService {
     static processSignup(newMember: any) {
@@ -121,6 +122,17 @@ class MemberService {
 
         return result as unknown as Member[];
     }
+
+    public async updateChosenUser(input: MemberUpdateInput, body: any): Promise<Member[]> {
+        input._id = shapeIntoMongooseObjectId(input._id);
+        const result = await this.memberModel
+            .findByIdAndUpdate({ _id: input._id }, input, { new: true })
+            .exec();
+
+        return result as unknown as Member[];
+    }
 }
 
-export default MemberService;
+
+
+export default MemberService; 

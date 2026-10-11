@@ -1,7 +1,7 @@
+html,
 body {
-    background-color: rgb(56, 152, 32);
-}
-
-.format1 {
-    font-size: 50px;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
 }

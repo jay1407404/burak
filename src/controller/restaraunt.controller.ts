@@ -3,7 +3,7 @@ import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/types/member";
 import { MemberType } from "../libs/types/enums/member.enum";
-import { Message } from "../libs/types/utils/Errors";
+import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
 
 
 
@@ -132,12 +132,17 @@ restarauntController.getUsers = async (req: Request, res: Response) => {
     }
 };
 
-restarauntController.updateChosenUser = (req: Request, res: Response) => {
+restarauntController.updateChosenUser = async (req: Request, res: Response) => {
     try {
-        console.log("updateChosenUser")
+        console.log("updateChosenUser");
+
+        const result = await memberService.updateChosenUser(req.body.memberId, req.body.chosen);
+
+        res.status(HttpCode.OK).json({ data: result });
     } catch (err) {
         console.log("Error, updateChosenUser:", err);
-        res.redirect("/admin");
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
     }
 };
 
