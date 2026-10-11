@@ -36,7 +36,7 @@ routerAdmin.post(
 routerAdmin.post(
     "/product/:id",
     restarauntController.verifyRestaraunt,
-    makeUploader("products").single("productImage"),
+    makeUploader("products").array("productImage", 5),
     productController.updateChoosenProduct
 );
 

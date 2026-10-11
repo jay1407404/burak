@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { LoginInput, Member, MemberInput } from "../libs/types/types/member";
-import Errors from "../libs/types/types/Errors";
+import Errors from "../libs/types/utils/Errors";
 
 const memberService = new MemberService();
 

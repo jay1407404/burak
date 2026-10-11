@@ -3,7 +3,7 @@ import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/types/member";
 import { MemberType } from "../libs/types/enums/member.enum";
-import Errors, { HttpCode, Message } from "../libs/types/types/Errors";
+import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
 
 
 
