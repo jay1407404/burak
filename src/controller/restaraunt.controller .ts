@@ -3,7 +3,7 @@ import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/types/member";
 import { MemberType } from "../libs/types/enums/member.enum";
-import { HttpCode, Message } from "../libs/types/types/Errors";
+import Errors, { HttpCode, Message } from "../libs/types/types/Errors";
 
 
 
@@ -42,62 +42,61 @@ restarauntController.getLogin = (req: Request, res: Response) => {
     }
 };
 
+
 restarauntController.processSignup = async (
     req: AdminRequest,
     res: Response
 ) => {
-    const file = req.file;
-    console.log("Uploaded file:", file);
-
-    const newMember: MemberInput = req.body;
-    console.log("Before image:", newMember.memberImage);
-
-    if (!file) throw new Error("Image file not uploaded");
-
-    newMember.memberImage = file.filename;
-    newMember.memberType = MemberType.RESTARAUNT;
-
-    console.log("After image:", newMember.memberImage);
-
-    const result = await memberService.processSignup(newMember);
     try {
-        const file = req.file;
+        console.log("processSignup");
 
-        if (!file) throw new Error("Please upload an image");
+        const file = req.file;
+        if (!file)
+            throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
 
         const newMember: MemberInput = req.body;
-        newMember.memberImage = file.filename;
+        newMember.memberImage = file?.path;
         newMember.memberType = MemberType.RESTARAUNT;
 
         const result = await memberService.processSignup(newMember);
 
         req.session.member = result;
-        req.session.save(() => res.redirect("/admin/product/all"));
+        req.session.save(function () {
+            res.redirect("/admin/product/all");
+        });
     } catch (err) {
         console.log("Error, processSignup:", err);
-        res.status(400).send(
-            err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG
+        const message =
+            err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
+
+        res.send(
+            `<script>alert("${message}"); window.location.replace('/admin/signup')</script>`
         );
     }
 };
 
-restarauntController.processLogin = async (req: Request, res: Response) => {
+
+restarauntController.processLogin = async (
+    req: AdminRequest,
+    res: Response
+) => {
     try {
         console.log("processLogin");
 
-        console.log("body:", req.body);
-        const result = await memberService.processLogin({ input: req.body });
+        const input: LoginInput = req.body;
+        const result = await memberService.processLogin({ input });
 
         req.session.member = result;
         req.session.save(function () {
             res.redirect("/admin/product/all");
         });
-
     } catch (err) {
         console.log("Error, processLogin:", err);
-        const message
-            = err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG;
-        res.send(`<script>alert("${message}");window.location.replace('admin/login')</script>`
+        const message =
+            err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
+
+        res.send(
+            `<script>alert("${message}"); window.location.replace('/admin/login')</script>`
         );
     }
 };

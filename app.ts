@@ -31,7 +31,7 @@ app.use(morgan(MORGAN_FORMAT));
 
 app.use(
     session({
-        secret: String(process.env.SESION_SECRET),
+        secret: String(process.env.SESION_SECRET as string),
         cookie: {
             maxAge: 1000 * 3600 * 3,   // 3 soat
         },
@@ -55,6 +55,6 @@ app.set("view engine", "ejs");
 
 /** 4-ROUTERS */
 app.use("/admin", routerAdmin);  // SSR 
-app.use("/", routerAdmin);       // SPA
+app.use("/", router);       // SPA
 
 export default app;

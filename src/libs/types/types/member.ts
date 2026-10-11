@@ -2,7 +2,20 @@ import { ObjectId } from "mongoose";
 import { MemberStatus, MemberType } from "../enums/member.enum";
 import { Request } from "express";
 import { Session } from "express-session";
+import type { File as MulterFile } from "multer";
+import { ProductInput } from "./product";
 
+export interface UploadedFile {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    size: number;
+    destination?: string;
+    filename?: string;
+    path?: string;
+    buffer?: Buffer;
+}
 
 export interface Member {
     _id?: ObjectId;
@@ -38,8 +51,9 @@ export interface LoginInput {
 }
 
 export interface AdminRequest extends Request {
-    file: any;
-    body: MemberInput;
-    member: Member;
+    member: any;
+    body: any;
     session: Session & { member: Member };
+    file: Express.Multer.File;
+    files: Express.Multer.File[];
 }

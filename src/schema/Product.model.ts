@@ -30,7 +30,7 @@ const ProductSchema = new Schema(
             required: true,
         },
 
-        productCount: {
+        productLeftCount: {
             type: Number,
             required: true,
         },
@@ -38,20 +38,20 @@ const ProductSchema = new Schema(
         productSize: {
             type: String,
             enum: ProductSize,
-            default: ProductSize.MEDIUM,
+            default: ProductSize.NORMAL,
         },
 
         productVolume: {
-            type: String,
+            type: Number,
             enum: ProductVolume,
             default: ProductVolume.MEDIUM,
         },
 
         productDesc: {
             type: String,
-            required: true,
         },
-        productImage: {
+
+        productImages: {
             type: [String],
             default: [],
         },

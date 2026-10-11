@@ -30,7 +30,6 @@ routerAdmin.post(
     "/product/create",
     restarauntController.verifyRestaraunt,
     makeUploader("products").array("productImage", 5),
-    //uploadProductImage.single("productImage"),
     productController.createNewProduct
 );
 

@@ -5,6 +5,9 @@ import { MemberType } from "../libs/types/enums/member.enum";
 import * as bcrypt from "bcryptjs";
 
 class MemberService {
+    static processSignup(newMember: any) {
+        throw new Error("Method not implemented.");
+    }
     private readonly memberModel;
 
     constructor() {
@@ -15,10 +18,6 @@ class MemberService {
 
 
     public async processSignup(input: MemberInput): Promise<Member> {
-        // const exist = await this.memberModel
-        //     .findOne({ memberPhone: input.memberPhone })
-        //     .exec();
-        // if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
 
         console.log("before:", input.memberPassword);
         const salt = await bcrypt.genSalt();
