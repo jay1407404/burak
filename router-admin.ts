@@ -42,5 +42,9 @@ routerAdmin.post(
 
 
 /** User */
+routerAdmin.get(
+    "/user/all",
+    restarauntController.verifyRestaraunt,
+    restarauntController.getUsers)
 export { routerAdmin };
 

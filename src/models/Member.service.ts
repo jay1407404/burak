@@ -115,6 +115,12 @@ class MemberService {
 
         return result as unknown as Member;
     }
+
+    public async getUsers(): Promise<Member[]> {
+        const result = await this.memberModel.find().exec();
+
+        return result as unknown as Member[];
+    }
 }
 
 export default MemberService;
