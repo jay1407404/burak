@@ -15,6 +15,13 @@ class ProductService {
 
     /** SSR */
 
+    public async getAllproducts(): Promise<Product[]> {
+        const result = (await this.productModel.find().exec()) as unknown as Product[];
+        if (!result || result.length === 0) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+        return result;
+    }
+
     public async createNewProduct(input: ProductInput): Promise<Product> {
         try {
             const product = await this.productModel.create(input) as unknown as Product;
