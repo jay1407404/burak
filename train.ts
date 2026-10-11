@@ -23,9 +23,15 @@
 
 
 
-function mergeSortedArrays(arr1: number[], arr2: number[]) {
-      return [...arr1, ...arr2].sort((a, b) => a - b);
+function sumOdds(num: number): number {
+      let count: number = 0;
+
+      for (let i = 1; i <= num; i += 2) {
+            count++;
+      }
+
+      return count;
 }
 
-console.log(mergeSortedArrays([0, 3, 4, 31], [4, 6, 30]));
-// [0, 3, 4, 4, 6, 30, 31]
+console.log(sumOdds(9));  // 4
+console.log(sumOdds(11)); // 5
