@@ -1,10 +1,17 @@
 import { NextFunction, Request, Response } from "express";
+import "express-session";
 import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/types/member";
 import { MemberType } from "../libs/types/enums/member.enum";
 import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
+import { Member } from "../libs/types/types/member";
 
+declare module "express-session" {
+    interface SessionData {
+        member?: Member;
+    }
+}
 
 
 const memberService = new MemberService();
@@ -92,8 +99,11 @@ restarauntController.processLogin = async (req: Request, res: Response) => {
         const result = await memberService.processLogin({ input: req.body });
         // TODO: SESSIONS AUTHENTICATION
 
+        req.session.member = result;
+        req.session.save(function () {
+            res.redirect("/admin/product/all");
+        })
 
-        res.send(result);
     } catch (err) {
         console.log("Error, processLogin:", err);
         const message
