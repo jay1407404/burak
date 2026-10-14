@@ -69,7 +69,8 @@ restarauntController.getLogin = (req: Request, res: Response) => {
 
 restarauntController.processSignup = async (req: AdminRequest, res: Response) => {
     try {
-        console.log("processSignup ");
+        console.log("BODY:", req.body);
+        console.log("memberNick:", req.body.memberNick);
 
         const newMember: MemberInput = req.body;
         newMember.memberType = MemberType.RESTARAUNT;
