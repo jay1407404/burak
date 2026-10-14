@@ -23,15 +23,16 @@
 
 
 
-function sumOdds(num: number): number {
-      let count: number = 0;
+f
+function countChars(str: string): object {
+      const result: any = {};
 
-      for (let i = 1; i <= num; i += 2) {
-            count++;
+      for (const char of str) {
+            result[char] = (result[char] || 0) + 1;
       }
 
-      return count;
+      return result;
 }
 
-console.log(sumOdds(9));  // 4
-console.log(sumOdds(11)); // 5
+console.log(countChars("hello"));
+// { h: 1, e: 1, l: 2, o: 1 }

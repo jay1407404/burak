@@ -2,7 +2,8 @@ import MemberModel from "../schema/Member.model";
 import { LoginInput, Member, MemberInput, MemberUpdateInput } from "../libs/types/types/member";
 import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
 import { MemberType } from "../libs/types/enums/member.enum";
-import * as bcrypt from "bcryptjs";
+// @ts-ignore bcryptjs does not provide type declarations in this project.
+import bcrypt from "bcryptjs";
 import { shapeIntoMongooseObjectId } from "../libs/types/utils/config";
 
 class MemberService {
