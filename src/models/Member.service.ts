@@ -1,7 +1,7 @@
 import MemberModel from "../schema/Member.model";
 import { LoginInput, Member, MemberInput, MemberUpdateInput } from "../libs/types/types/member";
 import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
-import { MemberType } from "../libs/types/enums/member.enum";
+import { MemberStatus, MemberType } from "../libs/types/enums/member.enum";
 // @ts-ignore bcryptjs does not provide type declarations in this project.
 import bcrypt from "bcryptjs";
 import { shapeIntoMongooseObjectId } from "../libs/types/utils/config";
@@ -66,11 +66,19 @@ class MemberService {
         // TODO: Consider member status later
         const member = await this.memberModel
             .findOne(
-                { memberNick: input.memberNick },
-                { memberNick: 1, memberPassword: 1 }
+                {
+                    memberNick: input.memberNick,
+                    MemberStatus: { $ne: MemberStatus.DELETE }
+                },
+                { memberNick: 1, memberPassword: 1, memberStatus: 1 }
             )
             .exec();
         if (!member) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
+        else if (member.memberStatus === MemberStatus.BLOCK) {
+            throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER)
+        }
+
+
 
         const isMatch = await bcrypt.compare(
             input.memberPassword,
