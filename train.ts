@@ -23,7 +23,7 @@
 
 
 
-f
+
 function countChars(str: string): object {
       const result: any = {};
 

@@ -20,6 +20,7 @@ routerAdmin.get("/logout", restarauntController.logout);
 routerAdmin.get("/check-me", restarauntController.checkAuthSession);
 
 /** Product */
+
 routerAdmin.get(
     "/product/all",
     restarauntController.verifyRestaraunt,
