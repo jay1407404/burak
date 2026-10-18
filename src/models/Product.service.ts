@@ -17,8 +17,6 @@ class ProductService {
 
     public async getAllproducts(): Promise<Product[]> {
         const result = (await this.productModel.find().exec()) as unknown as Product[];
-        if (!result || result.length === 0) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-
         return result;
     }
 
