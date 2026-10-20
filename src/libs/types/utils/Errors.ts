@@ -33,11 +33,11 @@ class Errors extends Error {
         message: Message.SOMETHING_WENT_WRONG,
     };
 
-    constructor(statusCode: HttpCode, statusMessage: Message) {
+    constructor(statusCode: HttpCode, statusMessage: string) {
         super();
         this.code = statusCode;
         this.message = statusMessage;
     }
 }
 
-export default Errors; 
+export default Errors;

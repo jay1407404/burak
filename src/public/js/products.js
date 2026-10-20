@@ -1,5 +1,27 @@
-const { get } = require("http");
-const { ProductVolume } = require("../../libs/types/enums/product.enum");
+// This script runs in the browser; keep Node.js imports out of this file.
+function initializeProductForm() {
+    const form = document.querySelector(".dish-container");
+    const newProductButton = document.getElementById("process-btn");
+    const cancelButton = document.getElementById("cancel-btn");
+
+    if (!form || !newProductButton || !cancelButton) return;
+
+    newProductButton.addEventListener("click", function () {
+        form.style.display = "flex";
+        newProductButton.style.display = "none";
+    });
+
+    cancelButton.addEventListener("click", function () {
+        form.style.display = "none";
+        newProductButton.style.display = "";
+    });
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeProductForm);
+} else {
+    initializeProductForm();
+}
 
 $(function () {
     $(".product-collection").on("change", () => {
@@ -13,33 +35,23 @@ $(function () {
         }
     });
 
-    $("#process-btn").on("click", () => {
-        $(".dish-container").slideToggle(500);
-        $("#process-btn").css("display", "none");
-    });
-
-    $("#cancel-btn").on("click", () => {
-        $(".dish-container").slideToggle(500);
-        $("#process-btn").css("display", "flex");
-    });
-
-    $(".new-product-status").on("change", async function (e) {
-        const id = e.target.id;
-        const productstatus = $(`#${id}.new-product-status`).val();
-        console.log("id:", id);
-        console.log("productStatus:", productStatus);
+    $(".new-product-status").on("change", async function () {
+        const select = this;
+        const id = select.id;
+        const productStatus = select.value;
+        select.disabled = true;
 
         try {
-            const response = await axios(`/admin/product/${id}`, { productStatus: productStatus })
-            console.log("respone:", response)
-            const result = response.data;
-            if (result.data) {
-                console.log("Product updated!");
-                $(".new-product-status").blur();
-            } else alert("Product update failed!");
+            const response = await axios.post(`/admin/product/${id}`, { productStatus });
+            if (!response.data.data) {
+                throw new Error("Product update failed");
+            }
+            select.blur();
         } catch (err) {
-            console.log(err);
-            alert("Product update failed!");
+            console.error("Product update failed:", err);
+            alert("Product update failed! Please refresh and try again.");
+        } finally {
+            select.disabled = false;
         }
     });
 

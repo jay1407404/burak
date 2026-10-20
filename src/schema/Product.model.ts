@@ -16,7 +16,8 @@ const ProductSchema = new Schema(
 
         productCollection: {
             type: String,
-            enum: ProductCollection,
+            // Accept the former spelling for products already stored in MongoDB.
+            enum: [...Object.values(ProductCollection), "DESERT"],
             required: true,
         },
 
@@ -70,4 +71,4 @@ ProductSchema.index(
     { unique: true } as mongoose.IndexOptions
 );
 
-export default mongoose.model("Product", ProductSchema); 
+export default mongoose.model("Product", ProductSchema);

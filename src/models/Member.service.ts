@@ -21,10 +21,8 @@ class MemberService {
 
     public async processSignup(input: MemberInput): Promise<Member> {
 
-        console.log("before:", input.memberPassword);
         const salt = await bcrypt.genSalt();
         input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
-        console.log("after:", input.memberPassword);
 
         try {
             const result = await this.memberModel.create(input) as unknown as Member;
@@ -32,6 +30,9 @@ class MemberService {
             return result;
         } catch (err) {
             console.log("Signup database error:", err);
+            if (typeof err === "object" && err !== null && "code" in err && err.code === 11000) {
+                throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+            }
             throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
         }
     }
@@ -144,4 +145,4 @@ class MemberService {
 
 
 
-export default MemberService; 
+export default MemberService;

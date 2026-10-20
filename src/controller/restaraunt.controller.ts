@@ -69,24 +69,50 @@ restarauntController.getLogin = (req: Request, res: Response) => {
 
 restarauntController.processSignup = async (req: AdminRequest, res: Response) => {
     try {
-        console.log("BODY:", req.body);
-        console.log("memberNick:", req.body.memberNick);
+        const { memberNick, memberPhone, memberPassword, confirmPassword } = req.body;
+        if (
+            typeof memberNick !== "string" || !memberNick.trim() ||
+            typeof memberPhone !== "string" || !memberPhone.trim() ||
+            typeof memberPassword !== "string" || !memberPassword
+        ) {
+            throw new Errors(HttpCode.BAD_REQUEST, "Please fill in all required fields.");
+        }
+        if (memberPassword !== confirmPassword) {
+            throw new Errors(HttpCode.BAD_REQUEST, "Passwords do not match. Please check them.");
+        }
+        if (!req.file) {
+            throw new Errors(HttpCode.BAD_REQUEST, "Please choose a restaurant image.");
+        }
+        if (!["image/jpeg", "image/png"].includes(req.file.mimetype)) {
+            throw new Errors(HttpCode.BAD_REQUEST, "Please choose a JPG, JPEG, or PNG image.");
+        }
 
-        const newMember: MemberInput = req.body;
-        newMember.memberType = MemberType.RESTARAUNT;
+        const newMember: MemberInput = {
+            memberNick: memberNick.trim(),
+            memberPhone: memberPhone.trim(),
+            memberPassword,
+            memberType: MemberType.RESTARAUNT,
+            memberImage: req.file.path,
+        };
         const result = await memberService.processSignup(newMember);
 
-        // TODO: SESSIONS AUTHENTICATION
-
         req.session.member = result;
-        req.session.save(function () {
-            res.send(result);
+        req.session.save(function (err) {
+            if (err) {
+                console.error("Error saving signup session:", err);
+                res.status(HttpCode.INTERNAL_SERVER_ERROR).send(
+                    'Your account was created, but automatic login failed. Please <a href="/admin/login">log in</a>.'
+                );
+                return;
+            }
+            res.redirect("/admin/product/all");
         });
     } catch (err) {
         console.log("Error, processSignup :", err);
         const message
             = err instanceof Error ? err.message : Message.SOMETHING_WENT_WRONG;
-        res.send(`<script>alert("${message}");window.location.replace('/admin/signup')</script>`
+        const alertMessage = JSON.stringify(message).replace(/</g, "\\u003c");
+        res.send(`<script>alert(${alertMessage});window.location.replace('/admin/signup')</script>`
         );
     }
 
@@ -177,4 +203,4 @@ restarauntController.checkAuthSession = (
     }
 };
 
-export default restarauntController; 
+export default restarauntController;

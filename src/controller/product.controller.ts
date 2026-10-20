@@ -15,9 +15,7 @@ const productController: T = {};
 
 productController.getAllProducts = async (req: Request, res: Response) => {
     try {
-        console.log("getAllProducts");
         const data = await productService.getAllproducts();
-        console.log("products:", data);
 
         res.render("products", { products: data });
     } catch (err) {
@@ -29,8 +27,6 @@ productController.getAllProducts = async (req: Request, res: Response) => {
 
 productController.createNewProduct = async (req: AdminRequest, res: Response) => {
     try {
-        console.log(".createNewProduct ");
-        console.log("req.body:", req.body);
 
         if (!req.files?.length) {
             throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.CREATE_FAILED);
@@ -49,17 +45,16 @@ productController.createNewProduct = async (req: AdminRequest, res: Response) =>
         console.log("Error, createNewProduct:", err);
         const message =
             err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
+        const alertMessage = JSON.stringify(message).replace(/</g, "\\u003c");
         res.send(
-            `<script>alert("${message}");window.location.replace('/admin/product/all')</script>`
+            `<script>alert(${alertMessage});window.location.replace('/admin/product/all')</script>`
         );
     }
 };
 
 productController.updateChoosenProduct = async (req: Request, res: Response) => {
     try {
-        console.log(".updateChoosenProduct ");
         const id = req.params.id;
-        console.log("id:", id)
 
         const result = await productService.updateChoosenProduct(id, req.body);
 

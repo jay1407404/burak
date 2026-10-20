@@ -1,53 +1,60 @@
-console.log("Signup frontend javascript file");
+function initializeSignupImage() {
+    const input = document.querySelector(".member-image");
+    if (!input) return;
 
-$(function () {
-    const fileTarget = $(".file-box .upload-hidden");
-    let filename;
+    input.addEventListener("change", function () {
+        const file = input.files[0];
+        const preview = document.querySelector(".upload-img-frame");
+        const filename = document.querySelector(".upload-name");
+        preview.src = "/img/default.jpeg";
+        filename.value = "Choose image";
 
-    fileTarget.on("change", function () {
-        if (window.FileReader) {
-            const uploadFile = $(this)[0].files[0];
-            console.log("uploadFile;", uploadFile);
-            const fileType = uploadFile["type"];
-            const validImageType = ["image/jpg", "image/jpeg", "image/png"]
-            if (!validImageType.includes(fileType)) {
-                alert("Please insert only jpeg, jpg and png!")
-            } else {
-                if (uploadFile) {
-                    console.log(URL.createObjectURL(uploadFile));
-                    $(".upload-img-frame")
-                        .attr("src", URL.createObjectURL(uploadFile))
-                        .addClass("success")
-                }
-                filename = $(this)[0].files[0].name;
-            }
-            $(this).siblings(".upload-name").val(filename);
+        // Cancelling the file picker can leave the input without a file.
+        if (!file) return;
+        if (!["image/jpeg", "image/png"].includes(file.type)) {
+            alert("Please choose a JPG, JPEG, or PNG image.");
+            input.value = "";
+            return;
         }
-    });
-});
 
+        filename.value = file.name;
+        const reader = new FileReader();
+        reader.onload = function () {
+            // Ignore an old preview if another file was selected while reading.
+            if (input.files[0] === file) preview.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeSignupImage);
+} else {
+    initializeSignupImage();
+}
 
 function validateSignupForm() {
-    const memberNick = $(".member-nick").val().trim();
-    const memberPhone = $(".member-phone").val().trim();
-    const memberPassword = $(".member-password").val();
-    const confirmPassword = $(".confirm-password").val();
+    const memberNick = document.querySelector(".member-nick").value.trim();
+    const memberPhone = document.querySelector(".member-phone").value.trim();
+    const memberPassword = document.querySelector(".member-password").value;
+    const confirmPassword = document.querySelector(".confirm-password").value;
+    const image = document.querySelector(".member-image").files[0];
 
     if (!memberNick || !memberPhone || !memberPassword || !confirmPassword) {
-        alert("Please insert all required inputs");
+        alert("Please fill in all required fields.");
         return false;
     }
-
     if (memberPassword !== confirmPassword) {
-        alert("Passwords differ, please check!");
+        alert("Passwords do not match. Please check them.");
         return false;
     }
-
-    const memberImage = $(".member-image").get(0).files[0]
-        ? $(".member-image ")
-        : null;
-    if (!memberImage) {
-        alert("Please insert restaraunt image!");
+    if (!image) {
+        alert("Please choose a restaurant image.");
         return false;
     }
+    if (!["image/jpeg", "image/png"].includes(image.type)) {
+        alert("Please choose a JPG, JPEG, or PNG image.");
+        return false;
+    }
+    return true;
 }
