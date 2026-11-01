@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { T } from "../libs/types/common";
 import MemberService from "../models/Member.service";
 import { LoginInput, Member, MemberInput } from "../libs/types/types/member";
-import Errors from "../libs/types/utils/Errors";
+import Errors, { HttpCode } from "../libs/types/utils/Errors";
 import AuthService from "../models/Auth.service";
 import { token } from "morgan";
+import { AUTH_TIMER } from "../libs/types/utils/config";
 
 const memberService = new MemberService();
 const authServie = new AuthService();
@@ -38,12 +39,15 @@ memberController.login = async (req: Request, res: Response) => {
         const input: LoginInput = req.body;
         const result = await memberService.login({ input }),
             token = AuthService.createToken(result);
-        console.log("token =>", token);
+        res.cookie("accessToken", token, {
+            maxAge: AUTH_TIMER * 3600 * 1000,
+            httpOnly: false,
+        });
         // TODO: TOKENS AUTHENTICATION
 
 
 
-        res.json({ member: result });
+        res.status(HttpCode.OK).json({ member: result, acessToken: token });
     } catch (err) {
         console.log("Error, login:", err);
         if (err instanceof Errors) res.status(err.code).json(err);

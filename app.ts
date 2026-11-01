@@ -3,6 +3,7 @@ import path from "path";
 import router from "./router";
 import { routerAdmin } from "./router-admin";
 import morgan from "morgan";
+import cokieParser from "cookie-parser"
 import { MORGAN_FORMAT } from "./src/libs/types/utils/config"
 
 import session from "express-session";
@@ -24,6 +25,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
+
+app.use(cokieParser());
 
 app.use(morgan(MORGAN_FORMAT));
 
