@@ -5,10 +5,11 @@ import { AUTH_TIMER } from "../libs/types/utils/config";
 import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
 
 class AuthService {
-    static createToken(result: Member): any {
-        throw new Error("Method not implemented.");
+    private readonly secretToken;
+
+    constructor() {
+        this.secretToken = process.env.SECRET_TOKEN as string;
     }
-    constructor() { }
 
     public async createToken(payload: Member) {
         return new Promise((resolve, reject) => {
@@ -28,6 +29,14 @@ class AuthService {
                 }
             );
         });
+    }
+    public async checkAuth(token: string): Promise<Member> {
+        const result: Member = (await jwt.verify(
+            token,
+            this.secretToken
+        )) as Member;
+        console.log(`--- [AUTH] memberNick: ${result.memberNick} ---`);
+        return result;
     }
 }
 
