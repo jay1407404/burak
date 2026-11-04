@@ -75,20 +75,6 @@ class MemberService {
 
     /** SPA */
 
-    public async getRestaurant(): Promise<Member[]> {
-        const result = await this.memberModel
-            .findOne({ memberType: MemberType.RESTARAUNT })
-            .lean()
-            .exec();
-        if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-
-        return result as unknown as Member[];
-
-    }
-
-
-
-
     public async signup(input: MemberInput): Promise<Member> {
         try {
             const exist = await this.memberModel.findOne({

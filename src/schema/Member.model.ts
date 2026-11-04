@@ -40,7 +40,7 @@ const memberSchema = new Schema({
         type: String,
     },
 
-    memberDEsc: {
+    memberDesc: {
         type: String,
     },
 
