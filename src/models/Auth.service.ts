@@ -1,4 +1,3 @@
-import { resolve } from "path";
 import { Member } from "../libs/types/types/member";
 import jwt from "jsonwebtoken";
 import { AUTH_TIMER } from "../libs/types/utils/config";
@@ -11,14 +10,16 @@ class AuthService {
         this.secretToken = process.env.SECRET_TOKEN as string;
     }
 
-    public async createToken(payload: Member) {
-        return new Promise((resolve, reject) => {
-            const duration = `${AUTH_TIMER}h`;
+    public async createToken(payload: Member): Promise<string> {
+        // Mongoose documents must be converted to plain objects before signing.
+        const tokenPayload = JSON.parse(JSON.stringify(payload));
+        delete tokenPayload.memberPassword;
+        return new Promise<string>((resolve, reject) => {
             jwt.sign(
-                payload,
-                process.env.SECRET_TOKEN as string,
+                tokenPayload,
+                this.secretToken,
                 {
-                    expiresIn: duration,
+                    expiresIn: AUTH_TIMER * 3600,
                 },
                 (err, token) => {
                     if (err)
@@ -31,12 +32,15 @@ class AuthService {
         });
     }
     public async checkAuth(token: string): Promise<Member> {
-        const result: Member = (await jwt.verify(
-            token,
-            this.secretToken
-        )) as Member;
-        console.log(`--- [AUTH] memberNick: ${result.memberNick} ---`);
-        return result;
+        try {
+            const result = jwt.verify(token, this.secretToken);
+            if (typeof result === "string" || !result._id || !result.memberNick) {
+                throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED);
+            }
+            return result as unknown as Member;
+        } catch {
+            throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED);
+        }
     }
 }
 

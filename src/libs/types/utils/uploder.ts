@@ -1,15 +1,18 @@
 import path from "path";
-import type { Request } from "express";
+import { mkdir } from "fs";
 import multer from "multer";
 import { v4 } from "uuid";
 
 
 
 /** MULTER IMAGE UPLOADER **/
-function getTargetImageStorage(address: any) {
+function getTargetImageStorage(address: string) {
     return multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, `./uploads/${address}`);
+            const destination = `./uploads/${address}`;
+            mkdir(destination, { recursive: true }, (err) => {
+                cb(err, destination);
+            });
         },
         filename: function (req, file, cb) {
             const extension = path.parse(file.originalname).ext;
