@@ -19,5 +19,7 @@ router.post("/member/update",
     uploader("members").single("memberImage"),
     memberController.updateMember
 );
+router.get("/member/topusers", memberController.getTopUsers);
+
 
 export default router;
