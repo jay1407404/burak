@@ -15,7 +15,22 @@ const productController: T = {};
 productController.getProducts = async (req: Request, res: Response) => {
     try {
         console.log("getProducts");
-        const { page, limit, order, productCollection, search } = req.query;
+        const { page = "1", limit = "10", order = "createdAt", productCollection, search } = req.query;
+        if (
+            typeof page !== "string" ||
+            typeof limit !== "string" ||
+            typeof order !== "string" ||
+            !Number.isSafeInteger(Number(page)) || Number(page) < 1 ||
+            !Number.isSafeInteger(Number(limit)) || Number(limit) < 1 || Number(limit) > 100 ||
+            !Number.isSafeInteger((Number(page) - 1) * Number(limit)) ||
+            !["createdAt", "updatedAt", "productPrice", "productViews", "productName"].includes(order) ||
+            (productCollection !== undefined &&
+                (typeof productCollection !== "string" ||
+                    !Object.values(ProductCollection).includes(productCollection as ProductCollection))) ||
+            (search !== undefined && (typeof search !== "string" || search.length > 200))
+        ) {
+            throw new Errors(HttpCode.BAD_REQUEST, "Invalid product query parameters");
+        }
         const inquiry: ProductInquiry = {
             order: String(order),
             page: Number(page),

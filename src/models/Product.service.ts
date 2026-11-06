@@ -22,7 +22,8 @@ class ProductService {
         if (inquiry.productCollection)
             match.productCollection = inquiry.productCollection;
         if (inquiry.search) {
-            match.productName = { $regex: inquiry.search, $options: "i" };
+            const search = inquiry.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            match.productName = { $regex: search, $options: "i" };
         }
 
         const sort: T =
@@ -34,12 +35,10 @@ class ProductService {
             .aggregate([
                 { $match: match },
                 { $sort: sort },
-                { $skip: (inquiry.page * 1 - 1) * inquiry.limit },
-                { $limit: inquiry.limit * 1 },
+                { $skip: (inquiry.page - 1) * inquiry.limit },
+                { $limit: inquiry.limit },
             ])
             .exec();
-
-        if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
         return result as unknown as Product[];
     }

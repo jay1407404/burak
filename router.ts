@@ -24,7 +24,7 @@ router.post("/member/update",
 router.get("/member/topusers", memberController.getTopUsers);
 
 //** PRODUCT */
-router.get("/products/all/:id", productController.getProducts);
+router.get("/products/all", productController.getProducts);
 
 
 export default router;
