@@ -3,7 +3,7 @@ import ProductModel from "../schema/Product.model";
 import Errors from "../libs/types/utils/Errors";
 import { HttpCode } from "../libs/types/utils/Errors";
 import { Message } from "../libs/types/utils/Errors";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { T } from "../libs/types/common";
 import { ProductStatus } from "../libs/types/enums/product.enum";
 
@@ -41,6 +41,27 @@ class ProductService {
             .exec();
 
         return result as unknown as Product[];
+    }
+
+
+    public async getProduct(
+        memberId: ObjectId | null,
+        id: string
+    ): Promise<Product> {
+        const productId = shapeIntoMongooseObjectId(id);
+
+        let result = await this.productModel
+            .findOne({
+                _id: productId,
+                productStatus: ProductStatus.PROCESS,
+            })
+            .exec();
+
+        if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+        // TOD O : if authenticated users => first => view log creation
+
+        return result as unknown as Product;
     }
 
     /** SSR */

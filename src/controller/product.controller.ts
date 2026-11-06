@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Errors, { HttpCode, Message } from "../libs/types/utils/Errors";
 import { T } from "../libs/types/common";
 import ProductService from "../models/Product.service";
-import { AdminRequest } from "../libs/types/types/member";
+import { AdminRequest, ExtendedRequest } from "../libs/types/types/member";
 import { ProductInput, ProductInquiry } from "../libs/types/types/product";
 import { ProductCollection } from "../libs/types/enums/product.enum";
 
@@ -15,22 +15,7 @@ const productController: T = {};
 productController.getProducts = async (req: Request, res: Response) => {
     try {
         console.log("getProducts");
-        const { page = "1", limit = "10", order = "createdAt", productCollection, search } = req.query;
-        if (
-            typeof page !== "string" ||
-            typeof limit !== "string" ||
-            typeof order !== "string" ||
-            !Number.isSafeInteger(Number(page)) || Number(page) < 1 ||
-            !Number.isSafeInteger(Number(limit)) || Number(limit) < 1 || Number(limit) > 100 ||
-            !Number.isSafeInteger((Number(page) - 1) * Number(limit)) ||
-            !["createdAt", "updatedAt", "productPrice", "productViews", "productName"].includes(order) ||
-            (productCollection !== undefined &&
-                (typeof productCollection !== "string" ||
-                    !Object.values(ProductCollection).includes(productCollection as ProductCollection))) ||
-            (search !== undefined && (typeof search !== "string" || search.length > 200))
-        ) {
-            throw new Errors(HttpCode.BAD_REQUEST, "Invalid product query parameters");
-        }
+        const { page, limit, order, productCollection, search } = req.query;
         const inquiry: ProductInquiry = {
             order: String(order),
             page: Number(page),
@@ -52,6 +37,21 @@ productController.getProducts = async (req: Request, res: Response) => {
         else res.status(Errors.standart.code).json(Errors.standart);
     }
 };
+
+productController.getProduct = async (req: ExtendedRequest, res: Response) => {
+    try {
+        console.log("getProduct");
+        const { id } = req.params;
+        const memberId = req.member?._id ?? null,
+            result = await productService.getProduct(memberId, id);
+
+        res.status(HttpCode.OK).json(result);
+    } catch (err) {
+        console.log("Error, getProduct:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standart.code).json(Errors.standart);
+    }
+}
 
 //** SSR */
 
