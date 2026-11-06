@@ -6,12 +6,18 @@ import { Message } from "../libs/types/utils/Errors";
 import mongoose, { ObjectId } from "mongoose";
 import { T } from "../libs/types/common";
 import { ProductStatus } from "../libs/types/enums/product.enum";
+import ViewService from "./View.service";
+import { ViewInput } from "../libs/types/types/view";
+import { ViewGroup } from "../libs/types/enums/view.enum";
 
 class ProductService {
     private readonly productModel;
+    public viewService;
+
 
     constructor() {
         this.productModel = ProductModel;
+        this.viewService = new ViewService();
     }
 
     /** SPA */
@@ -59,7 +65,33 @@ class ProductService {
 
         if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
 
-        // TOD O : if authenticated users => first => view log creation
+        if (memberId) {
+            // Check Existence
+            const input: ViewInput = {
+                memberId: memberId,
+                viewRefId: productId,
+                viewGroup: ViewGroup.PRODUCT,
+            };
+            const existView = await this.viewService.checkViewExistance(input);
+
+            console.log("existView:", existView);
+            if (!existView) {
+                // Insert View
+                const view = await this.viewService.insertMemberView(input);
+                if (!view) return result as unknown as Product;
+
+                // Increase Counts
+                result = await this.productModel
+                    .findOneAndUpdate(
+                        { _id: productId },
+                        { $inc: { productViews: +1 } },
+                        { new: true }
+                    )
+                    .exec();
+                if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+            }
+
+        }
 
         return result as unknown as Product;
     }
@@ -99,9 +131,9 @@ class ProductService {
         input: ProductUpdateInput
     ): Promise<Product> {
         // string => ObjectId
-        id = shapeIntoMongooseObjectId(id);
+        const productId = shapeIntoMongooseObjectId(id);
         const result = await this.productModel
-            .findOneAndUpdate({ _id: id }, input, { new: true })
+            .findOneAndUpdate({ _id: productId }, input, { new: true })
             .exec() as unknown as Product | null;
         if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
 
@@ -110,7 +142,7 @@ class ProductService {
 }
 
 export default ProductService;
-function shapeIntoMongooseObjectId(id: string): string {
-    return id;
+function shapeIntoMongooseObjectId(id: string): mongoose.Types.ObjectId {
+    return new mongoose.Types.ObjectId(id);
 }
 
