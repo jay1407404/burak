@@ -13,7 +13,7 @@ const OrderSchema = new Schema({
     },
 
     orderStatus: {
-        type: Number,
+        type: String,
         enum: OrderStatus,
         default: OrderStatus.PAUSE,
     },
