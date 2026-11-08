@@ -36,6 +36,11 @@ const memberSchema = new Schema({
         required: true
     },
 
+    memberPoints: {
+        type: Number,
+        default: 0,
+    },
+
     memberAddress: {
         type: String,
     },
