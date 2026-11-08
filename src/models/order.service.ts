@@ -69,11 +69,11 @@ class OrderService {
         inquiry: OrderInquiry
     ): Promise<Order[]> {
         const memberId = shapeIntoMongooseObjectId(member._id);
-        const matches = { memberId: memberId, OrderStatus: inquiry.OrderStatus };
+        const matches = { memberId: memberId, orderStatus: inquiry.OrderStatus };
 
         const result = await this.orderModel.aggregate([
             { $match: matches },
-            { $sort: { updateAt: -1 } },
+            { $sort: { updatedAt: -1 } },
             { $skip: (inquiry.page - 1) * inquiry.limit },
             { $limit: inquiry.limit },
             {
