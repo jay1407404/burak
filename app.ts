@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import path from "path";
 import router from "./router";
@@ -26,6 +27,11 @@ app.use("/uploads", express.static(path.resolve("uploads")));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
+app.use(
+    cors({
+        credentials: true,
+        origin: true
+    }))
 
 app.use(cokieParser());
 

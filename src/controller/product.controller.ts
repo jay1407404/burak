@@ -17,7 +17,7 @@ productController.getProducts = async (req: Request, res: Response) => {
         console.log("getProducts");
         const { page, limit, order, productCollection, search } = req.query;
         const inquiry: ProductInquiry = {
-            order: String(order),
+            order: order === "productView" ? "productViews" : String(order),
             page: Number(page),
             limit: Number(limit),
         };

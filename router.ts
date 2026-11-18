@@ -25,7 +25,7 @@ router.post("/member/update",
 router.get("/member/topusers", memberController.getTopUsers);
 
 //** PRODUCT */
-router.get("/products/all", productController.getProducts);
+router.get(["/products/all", "/product/all"], productController.getProducts);
 router.get("/products/:id",
     memberController.retrieveAuth,
     productController.getProduct
